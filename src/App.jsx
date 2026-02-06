@@ -104,6 +104,17 @@ const DEFAULT_DATA = {
     { id: "style-41", number: 41, name: "Skin Fade Undercut", desc: "Disconnected undercut shaved to skin on the sides", image: "/styles/style-41.webp" },
     { id: "style-42", number: 42, name: "Taper Skin Fade", desc: "Classic taper gradually blending down to skin", image: "/styles/style-42.webp" },
   ],
+  serviceCategories: [
+    { id: "cat1", name: "Cuts & Fades", desc: "Precision cuts tailored to your style — from classic tapers to skin fades.", icon: "scissors" },
+    { id: "cat2", name: "Shave & Grooming", desc: "Hot towel shaves, beard trims, and razor-sharp line-ups.", icon: "shave" },
+    { id: "cat3", name: "Hair Designs", desc: "Custom freehand art and carved patterns for a one-of-a-kind look.", icon: "design" },
+    { id: "cat4", name: "Skincare & Brows", desc: "Deep-cleanse facials, eyebrow shaping, and skin rejuvenation.", icon: "face" },
+  ],
+  about: {
+    headline: "Craftsmanship Since Day One",
+    text: "Majestic Barbershop R&S LLC has been serving the Jamaica, Queens community with premium cuts and genuine care. Our barbers bring 10+ years of experience to every chair — whether it's a classic taper, a razor-sharp fade, or custom hair art. We moved to our new location on 163rd St, but the quality and commitment never changed.",
+    values: ["Walk-Ins Welcome", "Bilingual Staff", "All Textures", "Kids Friendly"],
+  },
   reviews: [
     { name: "Marcus T.", text: "Been coming here for years. Even after the move, same quality every time. Never miss.", rating: 5 },
     { name: "David R.", text: "Best barbershop in Jamaica. Clean shop, skilled barbers, no long waits.", rating: 5 },
@@ -111,7 +122,7 @@ const DEFAULT_DATA = {
   ],
 };
 
-const loadData = () => { try { const s = localStorage.getItem("majestic-v2"); if (s) { const p = JSON.parse(s); return { ...DEFAULT_DATA, ...p, business: { ...DEFAULT_DATA.business, ...p.business }, services: { barbershop: p.services?.barbershop || DEFAULT_DATA.services.barbershop }, nailsSalon: { ...DEFAULT_DATA.nailsSalon, ...p.nailsSalon }, barbers: p.barbers || DEFAULT_DATA.barbers, styleGallery: p.styleGallery || DEFAULT_DATA.styleGallery, reviews: p.reviews || DEFAULT_DATA.reviews }; } } catch(e){} return DEFAULT_DATA; };
+const loadData = () => { try { const s = localStorage.getItem("majestic-v2"); if (s) { const p = JSON.parse(s); return { ...DEFAULT_DATA, ...p, business: { ...DEFAULT_DATA.business, ...p.business }, services: { barbershop: p.services?.barbershop || DEFAULT_DATA.services.barbershop }, nailsSalon: { ...DEFAULT_DATA.nailsSalon, ...p.nailsSalon }, barbers: p.barbers || DEFAULT_DATA.barbers, styleGallery: p.styleGallery || DEFAULT_DATA.styleGallery, serviceCategories: p.serviceCategories || DEFAULT_DATA.serviceCategories, about: { ...DEFAULT_DATA.about, ...p.about }, reviews: p.reviews || DEFAULT_DATA.reviews }; } } catch(e){} return DEFAULT_DATA; };
 const saveData = (d) => { try { localStorage.setItem("majestic-v2", JSON.stringify(d)); } catch(e){} };
 
 // ─── EDITABLE COMPONENTS ───
@@ -127,7 +138,7 @@ function ImgUpload({ src, onSet, admin, style = {}, placeholder, children }) {
   const has = src && src.length > 10;
   return (
     <div style={{ ...style, position:"relative", overflow:"hidden" }}>
-      {has ? <img src={src} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} /> : (
+      {has ? <img src={src} alt="" loading="lazy" style={{ width:"100%", height:"100%", objectFit:"cover" }} /> : (
         <div style={{ width:"100%", height:"100%", background:"linear-gradient(135deg,#131313,#1e1e1e)", display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", gap:6 }}>
           {children || <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>}
           {placeholder && <span style={{ color:"#444", fontSize:11, fontWeight:600 }}>{placeholder}</span>}
@@ -184,7 +195,37 @@ const Icons = {
   chevron: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>,
   back: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>,
   text: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>,
+  shave: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg>,
+  design: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>,
+  face: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+  bigScissors: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>,
 };
+
+// ─── SCROLL ANIMATION HOOK ───
+function useInView(options = {}) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setVisible(true); obs.unobserve(el); }
+    }, { threshold: 0.1, ...options });
+    obs.observe(el);
+    return () => obs.disconnect();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return [ref, visible];
+}
+
+function FadeIn({ children, delay = 0, style = {}, className = "" }) {
+  const [ref, visible] = useInView();
+  return (
+    <div ref={ref} className={className} style={{ ...style, opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(24px)", transition: `opacity .6s ease ${delay}s, transform .6s ease ${delay}s` }}>
+      {children}
+    </div>
+  );
+}
 
 // ─── GLOBAL STYLES ───
 const CSS = `
@@ -216,6 +257,11 @@ body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--text);-w
 .admin-fab:hover{background:rgba(255,255,255,1);}.admin-fab.on{background:rgba(196,30,42,.95);color:#fff;}
 .sticky-cta{position:fixed;bottom:0;left:0;right:0;z-index:800;background:linear-gradient(transparent,rgba(6,6,6,.98) 35%);padding:24px 16px 16px;display:flex;gap:8px;}
 @media(min-width:769px){.sticky-cta{display:none!important;}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}.fade-in.visible{opacity:1;transform:none;}
+.cat-card{background:var(--card);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);transition:transform .3s ease,box-shadow .3s ease;cursor:pointer;position:relative;}
+.cat-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(196,30,42,.12);}
+.cat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--accent);transform:scaleX(0);transition:transform .3s ease;}.cat-card:hover::after{transform:scaleX(1);}
+.gallery-card{transition:transform .25s ease,box-shadow .25s ease;}.gallery-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.4);}
 `;
 
 // ─── NAV ───
@@ -246,6 +292,60 @@ function Nav({ admin, currentPage, onNav, biz }) {
       </div>}
       <style>{`@media(max-width:720px){.mnav-btn{display:block!important;}.dnav{display:none!important;}}`}</style>
     </nav>
+  );
+}
+
+// ─── SERVICE CATEGORY SHOWCASE ───
+function ServiceShowcase({ categories, onNav }) {
+  const iconMap = { scissors: Icons.bigScissors, shave: Icons.shave, design: Icons.design, face: Icons.face };
+  return (
+    <div style={{ background: "var(--card)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
+      <div className="section" style={{ paddingTop: 48, paddingBottom: 48 }}>
+        <FadeIn>
+          <div style={{ textAlign: "center", marginBottom: 32 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "var(--accent)", letterSpacing: 4, textTransform: "uppercase", marginBottom: 10 }}>What We Do</div>
+            <h2 className="heading" style={{ fontSize: 30 }}>Premium Services</h2>
+            <p style={{ color: "var(--dim)", fontSize: 14, marginTop: 8, maxWidth: 440, margin: "8px auto 0" }}>From classic cuts to custom designs — every service delivered with precision.</p>
+          </div>
+        </FadeIn>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16 }}>
+          {categories.map((cat, i) => (
+            <FadeIn key={cat.id} delay={i * 0.1}>
+              <div className="cat-card" onClick={() => onNav("services")} style={{ padding: 24, textAlign: "center" }}>
+                <div style={{ width: 56, height: 56, borderRadius: "50%", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", color: "var(--accent)" }}>
+                  {iconMap[cat.icon] || Icons.bigScissors}
+                </div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 8, fontFamily: "'Outfit', sans-serif" }}>{cat.name}</h3>
+                <p style={{ fontSize: 13, color: "var(--dim)", lineHeight: 1.5 }}>{cat.desc}</p>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── ABOUT SECTION ───
+function AboutSection({ about, admin, update }) {
+  const ua = (k, v) => update("about", { ...about, [k]: v });
+  return (
+    <div className="section" style={{ paddingTop: 48, paddingBottom: 48 }}>
+      <FadeIn>
+        <div style={{ maxWidth: 640, margin: "0 auto", textAlign: "center" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "var(--accent)", letterSpacing: 4, textTransform: "uppercase", marginBottom: 10 }}>Our Story</div>
+          <h2 className="heading" style={{ fontSize: 28, marginBottom: 16 }}>
+            <E value={about.headline} onChange={v => ua("headline", v)} admin={admin} style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 28, fontWeight: 700, color: "#fff", textAlign: "center" }} />
+          </h2>
+          <E value={about.text} onChange={v => ua("text", v)} admin={admin} multi tag="p" style={{ fontSize: 15, lineHeight: 1.8, color: "var(--dim)", marginBottom: 24 }} />
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center" }}>
+            {about.values.map((v, i) => (
+              <span key={i} style={{ background: "var(--accent-subtle)", color: "var(--accent)", fontSize: 12, fontWeight: 600, padding: "6px 16px", borderRadius: 20, border: "1px solid var(--accent-border)" }}>{v}</span>
+            ))}
+          </div>
+        </div>
+      </FadeIn>
+    </div>
   );
 }
 
@@ -317,6 +417,12 @@ function HomePage({ data, admin, update, onNav }) {
         )}
       </div>
 
+      {/* Service Categories Showcase */}
+      <ServiceShowcase categories={data.serviceCategories || DEFAULT_DATA.serviceCategories} onNav={onNav} />
+
+      {/* About Section */}
+      <AboutSection about={data.about || DEFAULT_DATA.about} admin={admin} update={update} />
+
       {/* Guarantee + Hours */}
       <div style={{ background:"var(--card)", borderTop:"1px solid var(--border)", borderBottom:"1px solid var(--border)" }}>
         <div className="section" style={{ paddingTop:36, paddingBottom:36 }}>
@@ -345,6 +451,7 @@ function HomePage({ data, admin, update, onNav }) {
       </div>
 
       {/* Quick Services Preview */}
+      <FadeIn>
       <div className="section" style={{ paddingTop:36, paddingBottom:20 }}>
         <h2 className="heading" style={{ fontSize:28, textAlign:"center", marginBottom:6 }}>Services & Pricing</h2>
         <p style={{ textAlign:"center", color:"var(--dim)", fontSize:14, marginBottom:24 }}>Straight from the board. No surprises.</p>
@@ -360,6 +467,7 @@ function HomePage({ data, admin, update, onNav }) {
           View Full Menu — {data.services.barbershop.length} services {Icons.chevron}
         </button>
       </div>
+      </FadeIn>
 
       {/* IZ Nails — Redirect Portal */}
       <div className="section" style={{ paddingTop:16, paddingBottom:20 }}>
@@ -396,14 +504,18 @@ function HomePage({ data, admin, update, onNav }) {
       {/* Reviews */}
       <div style={{ background:"var(--card)", borderTop:"1px solid var(--border)" }}>
         <div className="section" style={{ paddingTop:36, paddingBottom:36 }}>
+          <FadeIn>
           <h2 className="heading" style={{ fontSize:24, textAlign:"center", marginBottom:24 }}>What People Say</h2>
+          </FadeIn>
           <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
             {data.reviews.map((r,i)=>(
-              <div key={i} style={{ background:"var(--surface)", borderRadius:"var(--radius)", padding:20, border:"1px solid var(--border)" }}>
+              <FadeIn key={i} delay={i * 0.1}>
+              <div style={{ background:"var(--surface)", borderRadius:"var(--radius)", padding:20, border:"1px solid var(--border)" }}>
                 <div style={{ color:"var(--accent)", marginBottom:8, letterSpacing:2, fontSize:13 }}>{"★".repeat(r.rating)}{"☆".repeat(5-r.rating)}</div>
                 <E value={r.text} onChange={v=>{const n=[...data.reviews];n[i]={...n[i],text:v};update("reviews",n);}} admin={admin} multi tag="p" style={{ fontSize:15, lineHeight:1.6, color:"var(--text)", marginBottom:10 }} />
                 <E value={r.name} onChange={v=>{const n=[...data.reviews];n[i]={...n[i],name:v};update("reviews",n);}} admin={admin} style={{ fontSize:13, fontWeight:600, color:"var(--dim)" }} />
               </div>
+              </FadeIn>
             ))}
           </div>
           {admin && <button onClick={()=>update("reviews",[...data.reviews,{name:"New Reviewer",text:"Great experience!",rating:5}])} style={{ marginTop:14, background:"rgba(196,30,42,.06)", border:"1px dashed var(--accent)", borderRadius:10, padding:"12px", color:"var(--accent)", fontWeight:600, cursor:"pointer", width:"100%", fontSize:13 }}>+ Add Review</button>}
@@ -490,8 +602,20 @@ function GalleryPage({ data, admin, update }) {
   const addStyle = () => update("styleGallery", [...gallery, { id:"style-"+Date.now(), number:gallery.length+1, name:`Style ${gallery.length+1}`, desc:"", image:null }]);
   const removeStyle = (i) => update("styleGallery", gallery.filter((_,idx)=>idx!==i));
 
-  const goNext = () => { if (lightbox === null) return; setLightbox((lightbox + 1) % gallery.length); };
-  const goPrev = () => { if (lightbox === null) return; setLightbox((lightbox - 1 + gallery.length) % gallery.length); };
+  const goNext = useCallback(() => setLightbox(prev => prev === null ? null : (prev + 1) % gallery.length), [gallery.length]);
+  const goPrev = useCallback(() => setLightbox(prev => prev === null ? null : (prev - 1 + gallery.length) % gallery.length), [gallery.length]);
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    if (lightbox === null) return;
+    const handleKey = (e) => {
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); goNext(); }
+      else if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); goPrev(); }
+      else if (e.key === "Escape") { setLightbox(null); }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [lightbox, goNext, goPrev]);
 
   return (
     <div className="page-enter">
@@ -500,7 +624,7 @@ function GalleryPage({ data, admin, update }) {
         <p style={{ textAlign:"center", color:"var(--dim)", fontSize:14, marginBottom:28 }}>Tap any style to view full size. Show your barber. Get the cut.</p>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))", gap:16 }}>
           {gallery.map((s,i)=>(
-            <div key={s.id} onClick={()=>!admin && s.image && setLightbox(i)} style={{ position:"relative", background:"var(--card)", borderRadius:14, overflow:"hidden", border:"1px solid var(--border)", cursor: (!admin && s.image) ? "pointer" : "default", transition:"transform .2s" }} onMouseEnter={e=>{if(!admin&&s.image)e.currentTarget.style.transform="scale(1.02)";}} onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";}}>
+            <div key={s.id} className="gallery-card" onClick={()=>!admin && s.image && setLightbox(i)} style={{ position:"relative", background:"var(--card)", borderRadius:14, overflow:"hidden", border:"1px solid var(--border)", cursor: (!admin && s.image) ? "pointer" : "default" }}>
               <ImgUpload src={s.image} onSet={v=>updateStyle(i,"image",v)} admin={admin} style={{ width:"100%", aspectRatio:"3/4" }} placeholder="">
                 <span style={{ fontSize:48, fontWeight:800, color:"#282828", fontFamily:"'Outfit',sans-serif" }}>{s.number}</span>
               </ImgUpload>
@@ -535,6 +659,10 @@ function GalleryPage({ data, admin, update }) {
       {/* Fullscreen Lightbox */}
       {lightbox !== null && (
         <div onClick={()=>setLightbox(null)} style={{ position:"fixed", inset:0, zIndex:9999, background:"rgba(0,0,0,.95)", display:"flex", alignItems:"center", justifyContent:"center", padding:20, cursor:"pointer" }}>
+          {/* Counter */}
+          <div style={{ position:"absolute", top:18, left:"50%", transform:"translateX(-50%)", background:"rgba(0,0,0,.6)", backdropFilter:"blur(4px)", borderRadius:20, padding:"5px 16px", fontSize:13, fontWeight:600, color:"rgba(255,255,255,.7)", zIndex:2, letterSpacing:1 }}>
+            {lightbox + 1} / {gallery.length}
+          </div>
           {/* Close button */}
           <button onClick={()=>setLightbox(null)} style={{ position:"absolute", top:16, right:16, background:"rgba(255,255,255,.1)", border:"none", borderRadius:"50%", width:44, height:44, color:"#fff", fontSize:24, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", zIndex:2 }}>×</button>
 
@@ -753,13 +881,50 @@ function ContactPage({ data, admin, update }) {
 }
 
 // ─── FOOTER ───
-function Footer({ biz }) {
+function Footer({ biz, onNav }) {
+  const links = [
+    { label: "Home", page: "home" },
+    { label: "Barbers", page: "barbers" },
+    { label: "Services", page: "services" },
+    { label: "Styles", page: "gallery" },
+    { label: "Contact", page: "contact" },
+  ];
   return (
-    <footer style={{ borderTop:"1px solid var(--border)", padding:"32px 20px", textAlign:"center" }}>
-      <span style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:18, fontWeight:700, color:"var(--accent)", letterSpacing:1 }}>MAJESTIC</span>
-      <p style={{ color:"var(--dim)", fontSize:12, marginTop:8 }}>{biz.address}</p>
-      <p style={{ color:"var(--dim)", fontSize:12, marginTop:3 }}>{biz.phone1} · {biz.phone2}</p>
-      <p style={{ color:"#333", fontSize:11, marginTop:16 }}>Built by Flow Productions</p>
+    <footer style={{ borderTop: "1px solid var(--border)", padding: "48px 20px 32px" }}>
+      <div style={{ maxWidth: 960, margin: "0 auto" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 32, marginBottom: 32 }}>
+          {/* Brand */}
+          <div>
+            <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, fontWeight: 700, color: "var(--accent)", letterSpacing: 1.5, display: "block", marginBottom: 10 }}>MAJESTIC</span>
+            <p style={{ color: "var(--dim)", fontSize: 13, lineHeight: 1.6 }}>Premium cuts in Jamaica, Queens. Walk-ins welcome.</p>
+          </div>
+          {/* Quick Links */}
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "var(--accent)", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 12 }}>Quick Links</div>
+            {links.map(l => (
+              <button key={l.page} onClick={() => onNav(l.page)} style={{ display: "block", background: "none", border: "none", color: "var(--dim)", fontSize: 13, padding: "4px 0", cursor: "pointer", fontFamily: "'Outfit',sans-serif", transition: "color .2s" }}
+                onMouseEnter={e => e.target.style.color = "#fff"}
+                onMouseLeave={e => e.target.style.color = "var(--dim)"}
+              >{l.label}</button>
+            ))}
+          </div>
+          {/* Contact Info */}
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "var(--accent)", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 12 }}>Contact</div>
+            <p style={{ color: "var(--dim)", fontSize: 13, marginBottom: 4 }}>{biz.address}</p>
+            <a href={`tel:${biz.phone1.replace(/\D/g, "")}`} style={{ color: "var(--dim)", fontSize: 13, display: "block", textDecoration: "none", marginBottom: 2 }}>{biz.phone1}</a>
+            <a href={`tel:${biz.phone2.replace(/\D/g, "")}`} style={{ color: "var(--dim)", fontSize: 13, display: "block", textDecoration: "none" }}>{biz.phone2}</a>
+            <div style={{ marginTop: 10 }}>
+              {biz.hours.map((h, i) => (
+                <div key={i} style={{ fontSize: 12, color: "#555", marginBottom: 1 }}>{h.days}: {h.time}</div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div style={{ borderTop: "1px solid var(--border)", paddingTop: 20, textAlign: "center" }}>
+          <p style={{ color: "#333", fontSize: 11 }}>Built by Flow Productions</p>
+        </div>
+      </div>
     </footer>
   );
 }
@@ -802,7 +967,7 @@ export default function App() {
         {page==="contact" && <ContactPage data={data} admin={admin} update={update} />}
       </main>
 
-      <Footer biz={data.business} />
+      <Footer biz={data.business} onNav={nav} />
 
       {!admin && page!=="barber-profile" && (
         <div className="sticky-cta">
