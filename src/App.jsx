@@ -27,6 +27,10 @@ const DEFAULT_DATA = {
       { days: "Friday – Saturday", time: "9 AM – 8 PM" },
       { days: "Sunday", time: "9 AM – 5 PM" },
     ],
+    instagram: "",
+    facebook: "",
+    tiktok: "",
+    whatsapp: "",
   },
   services: {
     barbershop: [
@@ -184,6 +188,11 @@ const Icons = {
   chevron: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>,
   back: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>,
   text: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>,
+  instagram: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>,
+  facebook: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>,
+  tiktok: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 12a4 4 0 104 4V4a5 5 0 005 5"/></svg>,
+  whatsapp: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>,
+  externalLink: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>,
 };
 
 // ─── GLOBAL STYLES ───
@@ -697,30 +706,151 @@ function ContactPage({ data, admin, update }) {
   const ub = (k,v)=>update("business",{...biz,[k]:v});
   const [form,setForm]=useState({name:"",msg:""});
   const [sent,setSent]=useState(false);
+
+  const sectionLabel = { fontSize:11, fontWeight:700, color:"var(--dim)", letterSpacing:1.8, textTransform:"uppercase", marginBottom:14 };
+  const card = { background:"var(--card)", borderRadius:16, border:"1px solid var(--border)", overflow:"hidden" };
+  const cardRow = { display:"flex", alignItems:"center", gap:14, padding:"16px 20px", transition:"background .2s" };
+  const cardDivider = { height:1, background:"var(--border)", margin:"0 20px" };
+  const iconWrap = (bg) => ({ width:40, height:40, borderRadius:10, background:bg, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 });
+
+  const socialLinks = [
+    { key:"instagram", label:"Instagram", icon:Icons.instagram, color:"#E1306C", bg:"rgba(225,48,108,.12)", prefix:"https://instagram.com/", placeholder:"username" },
+    { key:"facebook", label:"Facebook", icon:Icons.facebook, color:"#1877F2", bg:"rgba(24,119,242,.12)", prefix:"https://facebook.com/", placeholder:"page name or URL" },
+    { key:"tiktok", label:"TikTok", icon:Icons.tiktok, color:"#fff", bg:"rgba(255,255,255,.1)", prefix:"https://tiktok.com/@", placeholder:"username" },
+  ];
+
+  const buildUrl = (val, prefix) => {
+    if (!val) return "";
+    if (val.startsWith("http://") || val.startsWith("https://")) return val;
+    return prefix + val.replace(/^@/, "");
+  };
+
+  const whatsappUrl = biz.whatsapp ? `https://wa.me/${biz.whatsapp.replace(/\D/g,"")}` : "";
+
   return (
     <div className="page-enter">
       <div className="section" style={{ maxWidth:600 }}>
         <h1 className="heading" style={{ fontSize:30, textAlign:"center", marginBottom:6 }}>Get in Touch</h1>
-        <p style={{ textAlign:"center", color:"var(--dim)", fontSize:15, marginBottom:28 }}>Fastest way to book? Call or text. We pick up.</p>
+        <p style={{ textAlign:"center", color:"var(--dim)", fontSize:15, marginBottom:36 }}>Fastest way to book? Call or text. We pick up.</p>
 
-        <div style={{ display:"flex", flexDirection:"column", gap:10, marginBottom:32 }}>
-          <a href={`tel:${biz.phone1.replace(/\D/g,"")}`} className="gold-btn" style={{ width:"100%", textDecoration:"none", fontSize:16 }}>{Icons.phone} {biz.phone1}</a>
-          <a href={`tel:${biz.phone2.replace(/\D/g,"")}`} className="outline-btn" style={{ width:"100%", textDecoration:"none", fontSize:16 }}>{Icons.phone} {biz.phone2}</a>
-          <a href={`sms:${biz.phone1.replace(/\D/g,"")}`} className="outline-btn" style={{ width:"100%", textDecoration:"none", borderColor:"var(--border)", color:"var(--dim)" }}>{Icons.text} Text Us</a>
+        {/* ── Call & Text ── */}
+        <div style={sectionLabel}>Call & Text</div>
+        <div style={{ ...card, marginBottom:28 }}>
+          <a href={`tel:${biz.phone1.replace(/\D/g,"")}`} style={{ ...cardRow, textDecoration:"none", color:"inherit", cursor:"pointer" }}>
+            <div style={iconWrap("rgba(196,30,42,.12)")}><span style={{ color:"var(--accent)" }}>{Icons.phone}</span></div>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ fontSize:15, fontWeight:600, color:"#fff" }}>{biz.phone1}</div>
+              <div style={{ fontSize:12, color:"var(--dim)", marginTop:1 }}>Primary line</div>
+            </div>
+            <span style={{ color:"var(--dim)" }}>{Icons.chevron}</span>
+          </a>
+          <div style={cardDivider}/>
+          <a href={`tel:${biz.phone2.replace(/\D/g,"")}`} style={{ ...cardRow, textDecoration:"none", color:"inherit", cursor:"pointer" }}>
+            <div style={iconWrap("rgba(196,30,42,.12)")}><span style={{ color:"var(--accent)" }}>{Icons.phone}</span></div>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ fontSize:15, fontWeight:600, color:"#fff" }}>{biz.phone2}</div>
+              <div style={{ fontSize:12, color:"var(--dim)", marginTop:1 }}>Secondary line</div>
+            </div>
+            <span style={{ color:"var(--dim)" }}>{Icons.chevron}</span>
+          </a>
+          <div style={cardDivider}/>
+          <a href={`sms:${biz.phone1.replace(/\D/g,"")}`} style={{ ...cardRow, textDecoration:"none", color:"inherit", cursor:"pointer" }}>
+            <div style={iconWrap("rgba(255,255,255,.06)")}><span style={{ color:"var(--dim)" }}>{Icons.text}</span></div>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ fontSize:15, fontWeight:600, color:"#fff" }}>Text Us</div>
+              <div style={{ fontSize:12, color:"var(--dim)", marginTop:1 }}>Send an SMS</div>
+            </div>
+            <span style={{ color:"var(--dim)" }}>{Icons.chevron}</span>
+          </a>
         </div>
 
-        {/* Address + Hours */}
-        <div style={{ background:"var(--card)", borderRadius:"var(--radius)", padding:22, border:"1px solid var(--border)", marginBottom:16 }}>
-          <div style={{ display:"flex", alignItems:"flex-start", gap:10, marginBottom:14 }}>
-            <span style={{ color:"var(--accent)", marginTop:2 }}>{Icons.map}</span>
-            <div>
-              <E value={biz.address} onChange={v=>ub("address",v)} admin={admin} style={{ fontSize:15, color:"#fff", fontWeight:500 }} />
-              <a href={biz.mapsUrl} target="_blank" rel="noopener noreferrer" style={{ color:"var(--accent)", fontSize:13, fontWeight:600, display:"block", marginTop:4 }}>Open in Maps →</a>
+        {/* ── WhatsApp ── */}
+        <div style={sectionLabel}>WhatsApp</div>
+        <div style={{ ...card, marginBottom:28 }}>
+          {admin && (
+            <div style={{ padding:"14px 20px", borderBottom:"1px solid var(--border)" }}>
+              <label style={{ fontSize:11, color:"var(--dim)", display:"block", marginBottom:6 }}>WhatsApp number (with country code, e.g. 13476179697)</label>
+              <input type="text" value={biz.whatsapp||""} onChange={e=>ub("whatsapp",e.target.value)} placeholder="13476179697" style={{ width:"100%", padding:"10px 12px", borderRadius:8, border:"1px dashed var(--accent)", background:"rgba(196,30,42,0.07)", color:"#fff", fontSize:14, fontFamily:"'Outfit',sans-serif", boxSizing:"border-box" }} />
             </div>
-          </div>
-          <div style={{ borderTop:"1px solid var(--border)", paddingTop:14 }}>
+          )}
+          {biz.whatsapp ? (
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" style={{ ...cardRow, textDecoration:"none", color:"inherit", cursor:"pointer" }}>
+              <div style={iconWrap("rgba(37,211,102,.12)")}><span style={{ color:"#25D366" }}>{Icons.whatsapp}</span></div>
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontSize:15, fontWeight:600, color:"#fff" }}>Message on WhatsApp</div>
+                <div style={{ fontSize:12, color:"var(--dim)", marginTop:1 }}>Tap to open chat</div>
+              </div>
+              <span style={{ color:"#25D366" }}>{Icons.externalLink}</span>
+            </a>
+          ) : (
+            <div style={{ ...cardRow, opacity:.4 }}>
+              <div style={iconWrap("rgba(255,255,255,.04)")}><span style={{ color:"var(--dim)" }}>{Icons.whatsapp}</span></div>
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:15, fontWeight:500, color:"var(--dim)" }}>WhatsApp</div>
+                <div style={{ fontSize:12, color:"var(--dim)", marginTop:1 }}>Coming soon</div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── Social Media ── */}
+        <div style={sectionLabel}>Follow Us</div>
+        <div style={{ ...card, marginBottom:28 }}>
+          {admin && (
+            <div style={{ padding:"14px 20px", borderBottom:"1px solid var(--border)", display:"flex", flexDirection:"column", gap:10 }}>
+              {socialLinks.map(s=>(
+                <div key={s.key}>
+                  <label style={{ fontSize:11, color:"var(--dim)", display:"block", marginBottom:4 }}>{s.label} (username or full URL)</label>
+                  <input type="text" value={biz[s.key]||""} onChange={e=>ub(s.key,e.target.value)} placeholder={s.placeholder} style={{ width:"100%", padding:"10px 12px", borderRadius:8, border:"1px dashed var(--accent)", background:"rgba(196,30,42,0.07)", color:"#fff", fontSize:14, fontFamily:"'Outfit',sans-serif", boxSizing:"border-box" }} />
+                </div>
+              ))}
+            </div>
+          )}
+          {socialLinks.map((s,i)=>{
+            const val = biz[s.key];
+            const url = buildUrl(val, s.prefix);
+            const hasLink = !!val;
+            return (
+              <div key={s.key}>
+                {i > 0 && <div style={cardDivider}/>}
+                {hasLink ? (
+                  <a href={url} target="_blank" rel="noopener noreferrer" style={{ ...cardRow, textDecoration:"none", color:"inherit", cursor:"pointer" }}>
+                    <div style={iconWrap(s.bg)}><span style={{ color:s.color }}>{s.icon}</span></div>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontSize:15, fontWeight:600, color:"#fff" }}>{s.label}</div>
+                      <div style={{ fontSize:12, color:"var(--dim)", marginTop:1 }}>@{val.replace(/^@/,"").replace(/^https?:\/\/(www\.)?[^/]+\/?/,"")}</div>
+                    </div>
+                    <span style={{ color:s.color }}>{Icons.externalLink}</span>
+                  </a>
+                ) : (
+                  <div style={{ ...cardRow, opacity:.4 }}>
+                    <div style={iconWrap("rgba(255,255,255,.04)")}><span style={{ color:"var(--dim)" }}>{s.icon}</span></div>
+                    <div style={{ flex:1 }}>
+                      <div style={{ fontSize:15, fontWeight:500, color:"var(--dim)" }}>{s.label}</div>
+                      <div style={{ fontSize:12, color:"var(--dim)", marginTop:1 }}>Not connected yet</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* ── Location & Hours ── */}
+        <div style={sectionLabel}>Location & Hours</div>
+        <div style={{ ...card, marginBottom:28 }}>
+          <a href={biz.mapsUrl} target="_blank" rel="noopener noreferrer" style={{ ...cardRow, textDecoration:"none", color:"inherit", cursor:"pointer" }}>
+            <div style={iconWrap("rgba(196,30,42,.12)")}><span style={{ color:"var(--accent)" }}>{Icons.map}</span></div>
+            <div style={{ flex:1, minWidth:0 }}>
+              <E value={biz.address} onChange={v=>ub("address",v)} admin={admin} style={{ fontSize:15, color:"#fff", fontWeight:500 }} />
+              <div style={{ fontSize:12, color:"var(--accent)", fontWeight:600, marginTop:3 }}>Open in Maps</div>
+            </div>
+            <span style={{ color:"var(--dim)" }}>{Icons.chevron}</span>
+          </a>
+          <div style={cardDivider}/>
+          <div style={{ padding:"14px 20px" }}>
             {biz.hours.map((h,i)=>(
-              <div key={i} style={{ display:"flex", justifyContent:"space-between", padding:"6px 0" }}>
+              <div key={i} style={{ display:"flex", justifyContent:"space-between", padding:"7px 0" }}>
                 <span style={{ fontSize:13, color:"var(--dim)" }}>{h.days}</span>
                 <span style={{ fontSize:13, color:"var(--accent)", fontWeight:600 }}>{h.time}</span>
               </div>
@@ -728,20 +858,23 @@ function ContactPage({ data, admin, update }) {
           </div>
         </div>
 
-        {/* Nails redirect */}
-        <div style={{ background:"var(--card)", borderRadius:"var(--radius)", padding:18, border:"1px solid var(--pink-border)", marginBottom:20, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-          <div>
-            <div style={{ fontSize:13, fontWeight:700, color:"var(--pink)" }}>{data.nailsSalon.name}</div>
-            <div style={{ fontSize:12, color:"var(--dim)", marginTop:2 }}>Nail services in-house</div>
-          </div>
-          <a href={data.nailsSalon.link || `tel:${data.nailsSalon.phone.replace(/\D/g,"")}`} target={data.nailsSalon.link ? "_blank" : undefined} rel={data.nailsSalon.link ? "noopener noreferrer" : undefined} style={{ color:"var(--pink)", fontWeight:600, fontSize:14, textDecoration:"none" }}>{data.nailsSalon.link ? "Visit Site →" : data.nailsSalon.phone}</a>
+        {/* ── Nails redirect ── */}
+        <div style={{ ...card, borderColor:"var(--pink-border)", marginBottom:28 }}>
+          <a href={data.nailsSalon.link || `tel:${data.nailsSalon.phone.replace(/\D/g,"")}`} target={data.nailsSalon.link ? "_blank" : undefined} rel={data.nailsSalon.link ? "noopener noreferrer" : undefined} style={{ ...cardRow, textDecoration:"none", color:"inherit", cursor:"pointer" }}>
+            <div style={iconWrap("var(--pink-dim)")}><span style={{ color:"var(--pink)" }}>{Icons.nail}</span></div>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ fontSize:15, fontWeight:600, color:"var(--pink)" }}>{data.nailsSalon.name}</div>
+              <div style={{ fontSize:12, color:"var(--dim)", marginTop:1 }}>Nail services in-house</div>
+            </div>
+            <span style={{ color:"var(--pink)" }}>{data.nailsSalon.link ? Icons.externalLink : Icons.chevron}</span>
+          </a>
         </div>
 
-        {/* Contact form */}
-        <div style={{ background:"var(--card)", borderRadius:"var(--radius)", padding:22, border:"1px solid var(--border)" }}>
-          <h3 style={{ fontSize:15, fontWeight:700, marginBottom:4, color:"#fff" }}>Leave a Message</h3>
-          <p style={{ fontSize:12, color:"var(--dim)", marginBottom:14 }}>Not urgent? Drop us a note.</p>
-          {sent ? <div style={{ textAlign:"center", padding:20, color:"var(--accent)", fontWeight:600 }}>✓ Sent! We'll be in touch.</div> : <>
+        {/* ── Contact Form ── */}
+        <div style={sectionLabel}>Leave a Message</div>
+        <div style={{ ...card, padding:22 }}>
+          <p style={{ fontSize:13, color:"var(--dim)", marginBottom:16 }}>Not urgent? Drop us a note.</p>
+          {sent ? <div style={{ textAlign:"center", padding:20, color:"var(--accent)", fontWeight:600 }}>Sent! We'll be in touch.</div> : <>
             <input type="text" placeholder="Your name" value={form.name} onChange={e=>setForm({...form,name:e.target.value})} style={{ width:"100%", padding:"13px 14px", borderRadius:10, border:"1px solid var(--border)", background:"var(--surface)", color:"#fff", fontSize:14, marginBottom:9, fontFamily:"'Outfit',sans-serif", boxSizing:"border-box" }} />
             <textarea placeholder="What's up?" value={form.msg} onChange={e=>setForm({...form,msg:e.target.value})} style={{ width:"100%", padding:"13px 14px", borderRadius:10, border:"1px solid var(--border)", background:"var(--surface)", color:"#fff", fontSize:14, minHeight:90, fontFamily:"'Outfit',sans-serif", boxSizing:"border-box", resize:"vertical" }} />
             <button className="gold-btn" onClick={()=>setSent(true)} style={{ width:"100%", marginTop:10 }}>Send</button>
@@ -754,11 +887,34 @@ function ContactPage({ data, admin, update }) {
 
 // ─── FOOTER ───
 function Footer({ biz }) {
+  const footerSocials = [
+    { key:"instagram", icon:Icons.instagram, color:"#E1306C", prefix:"https://instagram.com/" },
+    { key:"facebook", icon:Icons.facebook, color:"#1877F2", prefix:"https://facebook.com/" },
+    { key:"tiktok", icon:Icons.tiktok, color:"#fff", prefix:"https://tiktok.com/@" },
+    { key:"whatsapp", icon:Icons.whatsapp, color:"#25D366", prefix:"https://wa.me/" },
+  ];
+  const buildUrl = (val, prefix, key) => {
+    if (!val) return "";
+    if (key === "whatsapp") return prefix + val.replace(/\D/g,"");
+    if (val.startsWith("http://") || val.startsWith("https://")) return val;
+    return prefix + val.replace(/^@/, "");
+  };
+  const activeSocials = footerSocials.filter(s => !!biz[s.key]);
   return (
     <footer style={{ borderTop:"1px solid var(--border)", padding:"32px 20px", textAlign:"center" }}>
       <span style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:18, fontWeight:700, color:"var(--accent)", letterSpacing:1 }}>MAJESTIC</span>
       <p style={{ color:"var(--dim)", fontSize:12, marginTop:8 }}>{biz.address}</p>
       <p style={{ color:"var(--dim)", fontSize:12, marginTop:3 }}>{biz.phone1} · {biz.phone2}</p>
+      {activeSocials.length > 0 && (
+        <div style={{ display:"flex", justifyContent:"center", gap:16, marginTop:14 }}>
+          {activeSocials.map(s=>(
+            <a key={s.key} href={buildUrl(biz[s.key], s.prefix, s.key)} target="_blank" rel="noopener noreferrer" style={{ width:36, height:36, borderRadius:10, background:"rgba(255,255,255,.06)", display:"flex", alignItems:"center", justifyContent:"center", color:s.color, transition:"background .2s", textDecoration:"none" }}
+              onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,.12)"}
+              onMouseLeave={e=>e.currentTarget.style.background="rgba(255,255,255,.06)"}
+            >{s.icon}</a>
+          ))}
+        </div>
+      )}
       <p style={{ color:"#333", fontSize:11, marginTop:16 }}>Built by Flow Productions</p>
     </footer>
   );
