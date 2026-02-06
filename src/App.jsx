@@ -59,10 +59,10 @@ const DEFAULT_DATA = {
     tagline: "Full nail services available in-house",
   },
   barbers: [
-    { id: "b1", name: "Barber 1", role: "Master Barber", bio: "Precision fades and razor-sharp line-ups. 10+ years in the chair.", specialties: ["Skin Fades", "Line-ups", "Hot Towel Shaves", "Designs"], phone: "(347) 617-9697", image: null },
-    { id: "b2", name: "Barber 2", role: "Senior Barber", bio: "Versatile with every texture. Tapers, designs, and creative work.", specialties: ["Tapers", "Designs", "Flat Top", "Beard Work"], phone: "(347) 617-9697", image: null },
-    { id: "b3", name: "Barber 3", role: "Barber", bio: "Consistent, reliable cuts every time. The regulars' favorite.", specialties: ["Classic Cuts", "Fades", "Beard Trim", "Kids Cuts"], phone: "(347) 245-8086", image: null },
-    { id: "b4", name: "Barber 4", role: "Barber", bio: "Fresh styles and trending cuts. Great with kids and creative fades.", specialties: ["Trending Styles", "Fades", "Kids Cuts", "Edge-ups"], phone: "(347) 245-8086", image: null },
+    { id: "b1", name: "Barber 1", role: "Master Barber", bio: "Precision fades and razor-sharp line-ups. 10+ years in the chair.", specialties: ["Skin Fades", "Line-ups", "Hot Towel Shaves", "Designs"], phone: "(347) 617-9697", image: null, instagram: "", facebook: "", tiktok: "", whatsapp: "" },
+    { id: "b2", name: "Barber 2", role: "Senior Barber", bio: "Versatile with every texture. Tapers, designs, and creative work.", specialties: ["Tapers", "Designs", "Flat Top", "Beard Work"], phone: "(347) 617-9697", image: null, instagram: "", facebook: "", tiktok: "", whatsapp: "" },
+    { id: "b3", name: "Barber 3", role: "Barber", bio: "Consistent, reliable cuts every time. The regulars' favorite.", specialties: ["Classic Cuts", "Fades", "Beard Trim", "Kids Cuts"], phone: "(347) 245-8086", image: null, instagram: "", facebook: "", tiktok: "", whatsapp: "" },
+    { id: "b4", name: "Barber 4", role: "Barber", bio: "Fresh styles and trending cuts. Great with kids and creative fades.", specialties: ["Trending Styles", "Fades", "Kids Cuts", "Edge-ups"], phone: "(347) 245-8086", image: null, instagram: "", facebook: "", tiktok: "", whatsapp: "" },
   ],
   styleGallery: [
     { id: "style-1", number: 1, name: "Burst Skin Fade", desc: "Fade radiates around the ear in a curved burst pattern", image: "/styles/style-1.webp" },
@@ -681,18 +681,122 @@ function BarberProfile({ barber, idx, data, admin, update, onNav }) {
           </div>
 
           {/* Book CTA */}
-          <div style={{ background:"var(--card)", borderRadius:"var(--radius)", padding:22, border:"1px solid var(--border)" }}>
-            <h3 style={{ fontSize:15, fontWeight:700, marginBottom:4, color:"#fff" }}>Book with {b.name}</h3>
-            <p style={{ fontSize:13, color:"var(--dim)", marginBottom:16, lineHeight:1.5 }}>Appointments by phone or text. Reach out directly.</p>
-            {admin && <div style={{ marginBottom:12 }}>
-              <label style={{ fontSize:11, color:"var(--dim)" }}>Barber's Phone</label>
-              <E value={b.phone} onChange={v=>up("phone",v)} admin={admin} style={{ color:"#fff", fontSize:14 }} />
-            </div>}
-            <div style={{ display:"flex", flexDirection:"column", gap:9 }}>
-              <a href={`tel:${b.phone.replace(/\D/g,"")}`} className="gold-btn" style={{ width:"100%", textDecoration:"none" }}>{Icons.phone} Call {b.name} — {b.phone}</a>
-              <a href={`sms:${b.phone.replace(/\D/g,"")}`} className="outline-btn" style={{ width:"100%", textDecoration:"none" }}>{Icons.text} Text {b.name}</a>
-            </div>
-          </div>
+          {(()=>{
+            const sLabel = { fontSize:11, fontWeight:700, color:"var(--dim)", letterSpacing:1.8, textTransform:"uppercase", marginBottom:14 };
+            const crd = { background:"var(--card)", borderRadius:16, border:"1px solid var(--border)", overflow:"hidden" };
+            const cRow = { display:"flex", alignItems:"center", gap:14, padding:"16px 20px", transition:"background .2s" };
+            const cDiv = { height:1, background:"var(--border)", margin:"0 20px" };
+            const iWrap = (bg) => ({ width:40, height:40, borderRadius:10, background:bg, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 });
+            const socials = [
+              { key:"instagram", label:"Instagram", icon:Icons.instagram, color:"#E1306C", bg:"rgba(225,48,108,.12)", prefix:"https://instagram.com/", placeholder:"username" },
+              { key:"facebook", label:"Facebook", icon:Icons.facebook, color:"#1877F2", bg:"rgba(24,119,242,.12)", prefix:"https://facebook.com/", placeholder:"page or URL" },
+              { key:"tiktok", label:"TikTok", icon:Icons.tiktok, color:"#fff", bg:"rgba(255,255,255,.1)", prefix:"https://tiktok.com/@", placeholder:"username" },
+            ];
+            const bUrl = (val, prefix) => {
+              if (!val) return "";
+              if (val.startsWith("http://") || val.startsWith("https://")) return val;
+              return prefix + val.replace(/^@/, "");
+            };
+            const waUrl = b.whatsapp ? `https://wa.me/${b.whatsapp.replace(/\D/g,"")}` : "";
+            const hasSocial = socials.some(s=>!!b[s.key]) || !!b.whatsapp;
+            return <>
+              <div style={sLabel}>Book with {b.name}</div>
+              <div style={{ ...crd, marginBottom:28 }}>
+                {admin && <div style={{ padding:"14px 20px", borderBottom:"1px solid var(--border)" }}>
+                  <label style={{ fontSize:11, color:"var(--dim)" }}>Barber's Phone</label>
+                  <E value={b.phone} onChange={v=>up("phone",v)} admin={admin} style={{ color:"#fff", fontSize:14 }} />
+                </div>}
+                <a href={`tel:${b.phone.replace(/\D/g,"")}`} style={{ ...cRow, textDecoration:"none", color:"inherit", cursor:"pointer" }}>
+                  <div style={iWrap("rgba(196,30,42,.12)")}><span style={{ color:"var(--accent)" }}>{Icons.phone}</span></div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontSize:15, fontWeight:600, color:"#fff" }}>Call {b.name}</div>
+                    <div style={{ fontSize:12, color:"var(--dim)", marginTop:1 }}>{b.phone}</div>
+                  </div>
+                  <span style={{ color:"var(--dim)" }}>{Icons.chevron}</span>
+                </a>
+                <div style={cDiv}/>
+                <a href={`sms:${b.phone.replace(/\D/g,"")}`} style={{ ...cRow, textDecoration:"none", color:"inherit", cursor:"pointer" }}>
+                  <div style={iWrap("rgba(255,255,255,.06)")}><span style={{ color:"var(--dim)" }}>{Icons.text}</span></div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontSize:15, fontWeight:600, color:"#fff" }}>Text {b.name}</div>
+                    <div style={{ fontSize:12, color:"var(--dim)", marginTop:1 }}>Send an SMS</div>
+                  </div>
+                  <span style={{ color:"var(--dim)" }}>{Icons.chevron}</span>
+                </a>
+                {(b.whatsapp || admin) && <>
+                  <div style={cDiv}/>
+                  {admin && !b.whatsapp && (
+                    <div style={{ padding:"14px 20px", borderBottom:"1px solid var(--border)" }}>
+                      <label style={{ fontSize:11, color:"var(--dim)", display:"block", marginBottom:4 }}>WhatsApp (with country code)</label>
+                      <input type="text" value={b.whatsapp||""} onChange={e=>up("whatsapp",e.target.value)} placeholder="13476179697" style={{ width:"100%", padding:"10px 12px", borderRadius:8, border:"1px dashed var(--accent)", background:"rgba(196,30,42,0.07)", color:"#fff", fontSize:14, fontFamily:"'Outfit',sans-serif", boxSizing:"border-box" }} />
+                    </div>
+                  )}
+                  {b.whatsapp ? (
+                    <a href={waUrl} target="_blank" rel="noopener noreferrer" style={{ ...cRow, textDecoration:"none", color:"inherit", cursor:"pointer" }}>
+                      <div style={iWrap("rgba(37,211,102,.12)")}><span style={{ color:"#25D366" }}>{Icons.whatsapp}</span></div>
+                      <div style={{ flex:1, minWidth:0 }}>
+                        <div style={{ fontSize:15, fontWeight:600, color:"#fff" }}>WhatsApp {b.name}</div>
+                        <div style={{ fontSize:12, color:"var(--dim)", marginTop:1 }}>Tap to open chat</div>
+                      </div>
+                      <span style={{ color:"#25D366" }}>{Icons.externalLink}</span>
+                    </a>
+                  ) : admin ? null : (
+                    <div style={{ ...cRow, opacity:.4 }}>
+                      <div style={iWrap("rgba(255,255,255,.04)")}><span style={{ color:"var(--dim)" }}>{Icons.whatsapp}</span></div>
+                      <div style={{ flex:1 }}><div style={{ fontSize:15, fontWeight:500, color:"var(--dim)" }}>WhatsApp</div><div style={{ fontSize:12, color:"var(--dim)", marginTop:1 }}>Coming soon</div></div>
+                    </div>
+                  )}
+                </>}
+              </div>
+
+              {/* Social Media */}
+              <div style={sLabel}>Follow {b.name}</div>
+              <div style={{ ...crd, marginBottom:28 }}>
+                {admin && (
+                  <div style={{ padding:"14px 20px", borderBottom:"1px solid var(--border)", display:"flex", flexDirection:"column", gap:10 }}>
+                    {socials.map(s=>(
+                      <div key={s.key}>
+                        <label style={{ fontSize:11, color:"var(--dim)", display:"block", marginBottom:4 }}>{s.label}</label>
+                        <input type="text" value={b[s.key]||""} onChange={e=>up(s.key,e.target.value)} placeholder={s.placeholder} style={{ width:"100%", padding:"10px 12px", borderRadius:8, border:"1px dashed var(--accent)", background:"rgba(196,30,42,0.07)", color:"#fff", fontSize:14, fontFamily:"'Outfit',sans-serif", boxSizing:"border-box" }} />
+                      </div>
+                    ))}
+                    <div>
+                      <label style={{ fontSize:11, color:"var(--dim)", display:"block", marginBottom:4 }}>WhatsApp (with country code)</label>
+                      <input type="text" value={b.whatsapp||""} onChange={e=>up("whatsapp",e.target.value)} placeholder="13476179697" style={{ width:"100%", padding:"10px 12px", borderRadius:8, border:"1px dashed var(--accent)", background:"rgba(196,30,42,0.07)", color:"#fff", fontSize:14, fontFamily:"'Outfit',sans-serif", boxSizing:"border-box" }} />
+                    </div>
+                  </div>
+                )}
+                {socials.map((s,i)=>{
+                  const val = b[s.key];
+                  const url = bUrl(val, s.prefix);
+                  const has = !!val;
+                  return (
+                    <div key={s.key}>
+                      {i > 0 && <div style={cDiv}/>}
+                      {has ? (
+                        <a href={url} target="_blank" rel="noopener noreferrer" style={{ ...cRow, textDecoration:"none", color:"inherit", cursor:"pointer" }}>
+                          <div style={iWrap(s.bg)}><span style={{ color:s.color }}>{s.icon}</span></div>
+                          <div style={{ flex:1, minWidth:0 }}>
+                            <div style={{ fontSize:15, fontWeight:600, color:"#fff" }}>{s.label}</div>
+                            <div style={{ fontSize:12, color:"var(--dim)", marginTop:1 }}>@{val.replace(/^@/,"").replace(/^https?:\/\/(www\.)?[^/]+\/?/,"")}</div>
+                          </div>
+                          <span style={{ color:s.color }}>{Icons.externalLink}</span>
+                        </a>
+                      ) : (
+                        <div style={{ ...cRow, opacity:.4 }}>
+                          <div style={iWrap("rgba(255,255,255,.04)")}><span style={{ color:"var(--dim)" }}>{s.icon}</span></div>
+                          <div style={{ flex:1 }}>
+                            <div style={{ fontSize:15, fontWeight:500, color:"var(--dim)" }}>{s.label}</div>
+                            <div style={{ fontSize:12, color:"var(--dim)", marginTop:1 }}>Not connected yet</div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </>;
+          })()}
           {admin && <button onClick={()=>{if(confirm(`Remove ${b.name}?`)){update("barbers",data.barbers.filter((_,x)=>x!==idx));onNav("barbers");}}} style={{ marginTop:12, background:"rgba(231,76,60,.08)", border:"1px solid rgba(231,76,60,.25)", borderRadius:10, padding:"10px", color:"#e74c3c", fontWeight:600, cursor:"pointer", width:"100%", fontSize:13 }}>🗑 Remove Barber</button>}
         </div>
       </div>
