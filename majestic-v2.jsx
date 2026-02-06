@@ -29,23 +29,29 @@ const DEFAULT_DATA = {
     ],
   },
   services: {
+    categories: [
+      { id: "cat-cuts", name: "Haircuts", image: "/services/cuts.jpg", desc: "Precision cuts for every style and texture" },
+      { id: "cat-shaves", name: "Shaves & Lineups", image: "/services/shaves.jpg", desc: "Sharp edges and clean lines every time" },
+      { id: "cat-color", name: "Color Treatments", image: "/services/color.jpg", desc: "Expert color work to elevate your look" },
+      { id: "cat-facials", name: "Facials & Grooming", image: "/services/facials.jpg", desc: "Premium treatments for the complete experience" },
+    ],
     barbershop: [
-      { id: "s1", name: "Haircut", price: "$25", image: null, desc: "Classic cut tailored to your style" },
-      { id: "s2", name: "Haircut & Shave", price: "$35", image: null, desc: "Full cut with a clean hot towel shave" },
-      { id: "s3", name: "Children", price: "$25", image: null, desc: "Ages 12 and under" },
-      { id: "s4", name: "Children Skin Fade", price: "$25", image: null, desc: "Precision skin fade for the young ones" },
-      { id: "s5", name: "Shave & Line Up", price: "$15", image: null, desc: "Clean shave with sharp line-up" },
-      { id: "s6", name: "Flat Top", price: "$25", image: null, desc: "Level precision flat top cut" },
-      { id: "s7", name: "Line Up", price: "$12", image: null, desc: "Crisp edges and hairline shaping" },
-      { id: "s8", name: "Taper", price: "$25", image: null, desc: "Gradual fade from short to long" },
-      { id: "s9", name: "Haircut, Shave & Color", price: "$65", image: null, desc: "Full service with color treatment" },
-      { id: "s10", name: "Beard Shave", price: "$12", image: null, desc: "Full beard removal with hot towel" },
-      { id: "s11", name: "Beard Trim", price: "$7", image: null, desc: "Shape and maintain your beard" },
-      { id: "s12", name: "Designs", price: "$60", image: null, desc: "Custom freehand hair art and patterns" },
-      { id: "s13", name: "Eyebrows", price: "$7", image: null, desc: "Clean shaping and grooming" },
-      { id: "s14", name: "Haircut, Shave & Facial", price: "$65", image: null, desc: "Premium package with facial treatment" },
-      { id: "s15", name: "Facials Only", price: "$25", image: null, desc: "Deep cleanse and rejuvenation" },
-      { id: "s16", name: "Haircut & Eyebrows", price: "$30", image: null, desc: "Cut plus brow cleanup combo" },
+      { id: "s1", name: "Haircut", price: "$25", image: null, desc: "Classic cut tailored to your style", category: "cat-cuts" },
+      { id: "s2", name: "Haircut & Shave", price: "$35", image: null, desc: "Full cut with a clean hot towel shave", category: "cat-cuts" },
+      { id: "s3", name: "Children", price: "$25", image: null, desc: "Ages 12 and under", category: "cat-cuts" },
+      { id: "s4", name: "Children Skin Fade", price: "$25", image: null, desc: "Precision skin fade for the young ones", category: "cat-cuts" },
+      { id: "s6", name: "Flat Top", price: "$25", image: null, desc: "Level precision flat top cut", category: "cat-cuts" },
+      { id: "s8", name: "Taper", price: "$25", image: null, desc: "Gradual fade from short to long", category: "cat-cuts" },
+      { id: "s12", name: "Designs", price: "$60", image: null, desc: "Custom freehand hair art and patterns", category: "cat-cuts" },
+      { id: "s5", name: "Shave & Line Up", price: "$15", image: null, desc: "Clean shave with sharp line-up", category: "cat-shaves" },
+      { id: "s7", name: "Line Up", price: "$12", image: null, desc: "Crisp edges and hairline shaping", category: "cat-shaves" },
+      { id: "s10", name: "Beard Shave", price: "$12", image: null, desc: "Full beard removal with hot towel", category: "cat-shaves" },
+      { id: "s11", name: "Beard Trim", price: "$7", image: null, desc: "Shape and maintain your beard", category: "cat-shaves" },
+      { id: "s9", name: "Haircut, Shave & Color", price: "$65", image: null, desc: "Full service with color treatment", category: "cat-color" },
+      { id: "s14", name: "Haircut, Shave & Facial", price: "$65", image: null, desc: "Premium package with facial treatment", category: "cat-facials" },
+      { id: "s15", name: "Facials Only", price: "$25", image: null, desc: "Deep cleanse and rejuvenation", category: "cat-facials" },
+      { id: "s13", name: "Eyebrows", price: "$7", image: null, desc: "Clean shaping and grooming", category: "cat-facials" },
+      { id: "s16", name: "Haircut & Eyebrows", price: "$30", image: null, desc: "Cut plus brow cleanup combo", category: "cat-facials" },
     ],
   },
   nailsSalon: {
@@ -111,7 +117,7 @@ const DEFAULT_DATA = {
   ],
 };
 
-const loadData = () => { try { const s = localStorage.getItem("majestic-v2"); if (s) { const p = JSON.parse(s); return { ...DEFAULT_DATA, ...p, business: { ...DEFAULT_DATA.business, ...p.business }, services: { barbershop: p.services?.barbershop || DEFAULT_DATA.services.barbershop }, nailsSalon: { ...DEFAULT_DATA.nailsSalon, ...p.nailsSalon }, barbers: p.barbers || DEFAULT_DATA.barbers, styleGallery: p.styleGallery || DEFAULT_DATA.styleGallery, reviews: p.reviews || DEFAULT_DATA.reviews }; } } catch(e){} return DEFAULT_DATA; };
+const loadData = () => { try { const s = localStorage.getItem("majestic-v2"); if (s) { const p = JSON.parse(s); return { ...DEFAULT_DATA, ...p, business: { ...DEFAULT_DATA.business, ...p.business }, services: { categories: p.services?.categories || DEFAULT_DATA.services.categories, barbershop: p.services?.barbershop || DEFAULT_DATA.services.barbershop }, nailsSalon: { ...DEFAULT_DATA.nailsSalon, ...p.nailsSalon }, barbers: p.barbers || DEFAULT_DATA.barbers, styleGallery: p.styleGallery || DEFAULT_DATA.styleGallery, reviews: p.reviews || DEFAULT_DATA.reviews }; } } catch(e){} return DEFAULT_DATA; };
 const saveData = (d) => { try { localStorage.setItem("majestic-v2", JSON.stringify(d)); } catch(e){} };
 
 // ─── EDITABLE COMPONENTS ───
@@ -344,9 +350,40 @@ function HomePage({ data, admin, update, onNav }) {
         </div>
       </div>
 
+      {/* Featured Service Categories */}
+      {(data.services.categories || []).length > 0 && (
+        <div className="section" style={{ paddingTop:36, paddingBottom:12 }}>
+          <h2 className="heading" style={{ fontSize:28, textAlign:"center", marginBottom:6 }}>What We Do</h2>
+          <p style={{ textAlign:"center", color:"var(--dim)", fontSize:14, marginBottom:24 }}>Expert services for every look.</p>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:10 }}>
+            {(data.services.categories || []).map(cat => {
+              const catCount = data.services.barbershop.filter(s => s.category === cat.id).length;
+              return (
+                <button key={cat.id} onClick={()=>onNav("services")} style={{ position:"relative", overflow:"hidden", borderRadius:14, border:"1px solid var(--border)", background:"var(--card)", cursor:"pointer", textAlign:"left", padding:0, transition:"transform .2s" }} onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.02)";}} onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";}}>
+                  <div style={{ width:"100%", height:120, overflow:"hidden", position:"relative" }}>
+                    {cat.image ? (
+                      <img src={cat.image} alt={cat.name} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+                    ) : (
+                      <div style={{ width:"100%", height:"100%", background:"linear-gradient(135deg,#1a1a1a,#0e0e0e)", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                        <span style={{ color:"var(--accent)", opacity:.2 }}>{Icons.scissors}</span>
+                      </div>
+                    )}
+                    <div style={{ position:"absolute", inset:0, background:"linear-gradient(transparent 20%, rgba(0,0,0,.85) 100%)" }} />
+                    <div style={{ position:"absolute", bottom:10, left:12, right:12, zIndex:2 }}>
+                      <span style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:15, fontWeight:700, color:"#fff", display:"block" }}>{cat.name}</span>
+                      <span style={{ fontSize:11, color:"rgba(255,255,255,.5)" }}>{catCount} service{catCount !== 1 ? "s" : ""}</span>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Quick Services Preview */}
-      <div className="section" style={{ paddingTop:36, paddingBottom:20 }}>
-        <h2 className="heading" style={{ fontSize:28, textAlign:"center", marginBottom:6 }}>Services & Pricing</h2>
+      <div className="section" style={{ paddingTop:16, paddingBottom:20 }}>
+        <h2 className="heading" style={{ fontSize:24, textAlign:"center", marginBottom:6 }}>Services & Pricing</h2>
         <p style={{ textAlign:"center", color:"var(--dim)", fontSize:14, marginBottom:24 }}>Straight from the board. No surprises.</p>
         <div style={{ display:"grid", gridTemplateColumns:"1fr", gap:1 }}>
           {data.services.barbershop.slice(0,8).map(s=>(
@@ -413,35 +450,114 @@ function HomePage({ data, admin, update, onNav }) {
   );
 }
 
-// ─── SERVICES PAGE (Interactive Menu with Photo Slots) ───
+// ─── SERVICES PAGE (Category-based with hero images) ───
 function ServicesPage({ data, admin, update, onNav }) {
-  const [view, setView] = useState("list"); // list | grid
+  const [activeCategory, setActiveCategory] = useState(null);
+  const categories = data.services.categories || [];
   const services = data.services.barbershop;
   const updateService = (i, field, val) => { const n = [...services]; n[i] = { ...n[i], [field]: val }; update("services", { ...data.services, barbershop: n }); };
-  const addService = () => update("services", { ...data.services, barbershop: [...services, { id: "s"+Date.now(), name: "New Service", price: "$0", image: null, desc: "" }] });
+  const addService = () => update("services", { ...data.services, barbershop: [...services, { id: "s"+Date.now(), name: "New Service", price: "$0", image: null, desc: "", category: activeCategory || categories[0]?.id || "" }] });
   const removeService = (i) => update("services", { ...data.services, barbershop: services.filter((_,idx)=>idx!==i) });
+  const updateCategory = (i, field, val) => { const n = [...categories]; n[i] = { ...n[i], [field]: val }; update("services", { ...data.services, categories: n }); };
+
+  const filteredServices = activeCategory ? services.filter(s => s.category === activeCategory) : services;
+  const activeCat = categories.find(c => c.id === activeCategory);
 
   return (
     <div className="page-enter">
-      <div className="section">
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
-          <h1 className="heading" style={{ fontSize:30 }}>Barbershop Services</h1>
-          <div style={{ display:"flex", gap:4, background:"var(--surface)", borderRadius:8, padding:3 }}>
-            <button onClick={()=>setView("list")} style={{ background:view==="list"?"var(--accent)":"transparent", color:view==="list"?"#000":"var(--dim)", border:"none", borderRadius:6, padding:"6px 10px", cursor:"pointer", fontSize:12, fontWeight:600 }}>List</button>
-            <button onClick={()=>setView("grid")} style={{ background:view==="grid"?"var(--accent)":"transparent", color:view==="grid"?"#000":"var(--dim)", border:"none", borderRadius:6, padding:"6px 10px", cursor:"pointer", fontSize:12, fontWeight:600 }}>{Icons.grid} Grid</button>
+      {/* Category Hero Banner */}
+      {!activeCategory && (
+        <div style={{ position:"relative", overflow:"hidden" }}>
+          <div style={{ background:"linear-gradient(160deg, #0a0a0a 0%, #1a0e0e 50%, #0a0a0a 100%)", padding:"48px 20px 24px" }}>
+            <div style={{ maxWidth:960, margin:"0 auto", textAlign:"center" }}>
+              <h1 className="heading" style={{ fontSize:"clamp(28px,6vw,38px)", marginBottom:8 }}>Our Services</h1>
+              <p style={{ color:"var(--dim)", fontSize:15, marginBottom:32, maxWidth:440, margin:"0 auto 32px" }}>{services.length} services · Prices straight from the board</p>
+
+              {/* Category Cards */}
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))", gap:12, maxWidth:960 }}>
+                {categories.map((cat, ci) => {
+                  const catCount = services.filter(s => s.category === cat.id).length;
+                  return (
+                    <button key={cat.id} onClick={() => setActiveCategory(cat.id)} style={{ position:"relative", overflow:"hidden", borderRadius:14, border:"1px solid var(--border)", background:"var(--card)", cursor:"pointer", textAlign:"left", padding:0, transition:"transform .2s, border-color .2s" }} onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.02)";e.currentTarget.style.borderColor="var(--accent)";}} onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.borderColor="var(--border)";}}>
+                      {/* Category image */}
+                      <div style={{ width:"100%", height:160, overflow:"hidden", position:"relative" }}>
+                        {cat.image ? (
+                          <img src={cat.image} alt={cat.name} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+                        ) : (
+                          <div style={{ width:"100%", height:"100%", background:"linear-gradient(135deg,#1a1a1a,#0e0e0e)", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                            <span style={{ color:"var(--accent)", opacity:.3 }}>{Icons.scissors}</span>
+                          </div>
+                        )}
+                        <div style={{ position:"absolute", inset:0, background:"linear-gradient(transparent 30%, rgba(0,0,0,.85) 100%)" }} />
+                        {admin && (
+                          <ImgUpload src={cat.image} onSet={v=>updateCategory(ci,"image",v)} admin={admin} style={{ position:"absolute", inset:0, opacity:0 }} />
+                        )}
+                      </div>
+                      <div style={{ padding:"14px 16px", position:"relative" }}>
+                        {admin ? (
+                          <input value={cat.name} onChange={e=>updateCategory(ci,"name",e.target.value)} onClick={e=>e.stopPropagation()} style={{ background:"rgba(196,30,42,.07)", border:"1px dashed var(--accent)", borderRadius:6, padding:"4px 8px", color:"#fff", fontSize:16, fontWeight:700, fontFamily:"'Cormorant Garamond',serif", width:"100%", boxSizing:"border-box", marginBottom:4 }} />
+                        ) : (
+                          <span style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:16, fontWeight:700, color:"#fff", display:"block", marginBottom:4 }}>{cat.name}</span>
+                        )}
+                        <span style={{ fontSize:12, color:"var(--dim)" }}>{catCount} service{catCount !== 1 ? "s" : ""}</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
-        <p style={{ color:"var(--dim)", fontSize:14, marginBottom:28 }}>{services.length} services · Prices straight from the board</p>
+      )}
 
-        {view === "list" ? (
-          <div>
-            {services.map((s,i)=>(
+      {/* Active Category View */}
+      {activeCategory && (
+        <div>
+          {/* Category Header with Image */}
+          <div style={{ position:"relative", overflow:"hidden", height:220 }}>
+            {activeCat?.image ? (
+              <img src={activeCat.image} alt={activeCat?.name} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+            ) : (
+              <div style={{ width:"100%", height:"100%", background:"linear-gradient(135deg,#1a0e0e,#0a0a0a)" }} />
+            )}
+            <div style={{ position:"absolute", inset:0, background:"linear-gradient(transparent 20%, rgba(6,6,6,.95) 100%)" }} />
+            <div style={{ position:"absolute", bottom:20, left:0, right:0, textAlign:"center", zIndex:2 }}>
+              <h2 className="heading" style={{ fontSize:28 }}>{activeCat?.name}</h2>
+              {activeCat?.desc && <p style={{ color:"var(--dim)", fontSize:14, marginTop:4 }}>{activeCat.desc}</p>}
+            </div>
+            {admin && activeCat && (
+              <div style={{ position:"absolute", top:10, right:10, zIndex:3 }}>
+                <ImgUpload src={activeCat.image} onSet={v=>{const ci=categories.findIndex(c=>c.id===activeCategory);if(ci>=0)updateCategory(ci,"image",v);}} admin={admin} style={{ width:80, height:40, borderRadius:8, opacity:.8 }} />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      <div className="section" style={{ paddingTop: activeCategory ? 24 : 8 }}>
+        {/* Back button + category tabs when in category view */}
+        {activeCategory && (
+          <div style={{ marginBottom:24 }}>
+            <button onClick={() => setActiveCategory(null)} style={{ background:"none", border:"none", color:"var(--accent)", fontWeight:600, cursor:"pointer", fontSize:14, padding:0, fontFamily:"'Outfit',sans-serif", display:"flex", alignItems:"center", gap:4, marginBottom:16 }}>{Icons.back} All Categories</button>
+            <div style={{ display:"flex", gap:6, overflowX:"auto", paddingBottom:4 }}>
+              {categories.map(cat => (
+                <button key={cat.id} onClick={() => setActiveCategory(cat.id)} style={{ background: activeCategory === cat.id ? "var(--accent)" : "var(--surface)", color: activeCategory === cat.id ? "#000" : "var(--dim)", border: activeCategory === cat.id ? "none" : "1px solid var(--border)", borderRadius:20, padding:"7px 16px", fontSize:12, fontWeight:600, cursor:"pointer", whiteSpace:"nowrap", fontFamily:"'Outfit',sans-serif", transition:"all .2s" }}>{cat.name}</button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Service list */}
+        <div>
+          {filteredServices.map((s, fi) => {
+            const i = services.findIndex(sv => sv.id === s.id);
+            return (
               <div key={s.id} style={{ display:"flex", gap:16, padding:"20px 0", borderBottom:"1px solid var(--border)", alignItems:"flex-start" }}>
-                <ImgUpload src={s.image} onSet={v=>updateService(i,"image",v)} admin={admin} style={{ width:110, height:110, borderRadius:12, flexShrink:0 }} placeholder="">
+                <ImgUpload src={s.image} onSet={v=>updateService(i,"image",v)} admin={admin} style={{ width:90, height:90, borderRadius:12, flexShrink:0 }} placeholder="">
                   {Icons.scissors}
                 </ImgUpload>
                 <div style={{ flex:1, minWidth:0, paddingTop:4 }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, marginBottom:6 }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, marginBottom:4 }}>
                     <E value={s.name} onChange={v=>updateService(i,"name",v)} admin={admin} style={{ fontSize:17, fontWeight:600, color:"#fff", display:"block" }} />
                     <div style={{ display:"flex", alignItems:"center", gap:8, flexShrink:0 }}>
                       <E value={s.price} onChange={v=>updateService(i,"price",v)} admin={admin} style={{ fontSize:18, fontWeight:700, color:"var(--accent)", textAlign:"right", width:admin?70:"auto" }} />
@@ -449,29 +565,18 @@ function ServicesPage({ data, admin, update, onNav }) {
                     </div>
                   </div>
                   <E value={s.desc} onChange={v=>updateService(i,"desc",v)} admin={admin} style={{ fontSize:13, color:"var(--dim)", lineHeight:1.5, display:"block" }} ph="Add a description..." />
+                  {admin && !activeCategory && (
+                    <select value={s.category||""} onChange={e=>updateService(i,"category",e.target.value)} style={{ marginTop:6, background:"var(--surface)", border:"1px solid var(--border)", borderRadius:6, padding:"4px 8px", color:"var(--accent)", fontSize:11, fontFamily:"'Outfit',sans-serif" }}>
+                      <option value="">No category</option>
+                      {categories.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
+                    </select>
+                  )}
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))", gap:16 }}>
-            {services.map((s,i)=>(
-              <div key={s.id} style={{ background:"var(--card)", borderRadius:"var(--radius)", overflow:"hidden", border:"1px solid var(--border)", position:"relative" }}>
-                <ImgUpload src={s.image} onSet={v=>updateService(i,"image",v)} admin={admin} style={{ width:"100%", height:260 }} placeholder={s.name}>
-                  <div style={{ color:"var(--accent)", opacity:.3 }}>{Icons.scissors}</div>
-                </ImgUpload>
-                <div style={{ padding:"16px 18px" }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
-                    <E value={s.name} onChange={v=>updateService(i,"name",v)} admin={admin} style={{ fontSize:16, fontWeight:600, color:"#fff", display:"block" }} />
-                    <E value={s.price} onChange={v=>updateService(i,"price",v)} admin={admin} style={{ fontSize:17, fontWeight:700, color:"var(--accent)", flexShrink:0 }} />
-                  </div>
-                  <E value={s.desc} onChange={v=>updateService(i,"desc",v)} admin={admin} style={{ fontSize:13, color:"var(--dim)", lineHeight:1.5, display:"block" }} ph="Add a description..." />
-                </div>
-                {admin && <button onClick={()=>removeService(i)} style={{ position:"absolute", top:8, right:8, background:"rgba(231,76,60,.9)", color:"#fff", border:"none", borderRadius:"50%", width:24, height:24, fontSize:14, cursor:"pointer" }}>×</button>}
-              </div>
-            ))}
-          </div>
-        )}
+            );
+          })}
+        </div>
+
         {admin && <button onClick={addService} style={{ marginTop:16, background:"rgba(196,30,42,.06)", border:"2px dashed var(--accent)", borderRadius:"var(--radius)", padding:"32px 20px", color:"var(--accent)", fontWeight:700, cursor:"pointer", width:"100%", fontSize:15 }}>+ Add Service</button>}
 
         <div style={{ marginTop:32, textAlign:"center" }}>
