@@ -30,22 +30,22 @@ const DEFAULT_DATA = {
   },
   services: {
     barbershop: [
-      { id: "s1", name: "Haircut", price: "$25", image: null, desc: "Classic cut tailored to your style" },
-      { id: "s2", name: "Haircut & Shave", price: "$35", image: null, desc: "Full cut with a clean hot towel shave" },
-      { id: "s3", name: "Children", price: "$25", image: null, desc: "Ages 12 and under" },
-      { id: "s4", name: "Children Skin Fade", price: "$25", image: null, desc: "Precision skin fade for the young ones" },
-      { id: "s5", name: "Shave & Line Up", price: "$15", image: null, desc: "Clean shave with sharp line-up" },
-      { id: "s6", name: "Flat Top", price: "$25", image: null, desc: "Level precision flat top cut" },
-      { id: "s7", name: "Line Up", price: "$12", image: null, desc: "Crisp edges and hairline shaping" },
-      { id: "s8", name: "Taper", price: "$25", image: null, desc: "Gradual fade from short to long" },
-      { id: "s9", name: "Haircut, Shave & Color", price: "$65", image: null, desc: "Full service with color treatment" },
-      { id: "s10", name: "Beard Shave", price: "$12", image: null, desc: "Full beard removal with hot towel" },
-      { id: "s11", name: "Beard Trim", price: "$7", image: null, desc: "Shape and maintain your beard" },
-      { id: "s12", name: "Designs", price: "$60", image: null, desc: "Custom freehand hair art and patterns" },
-      { id: "s13", name: "Eyebrows", price: "$7", image: null, desc: "Clean shaping and grooming" },
-      { id: "s14", name: "Haircut, Shave & Facial", price: "$65", image: null, desc: "Premium package with facial treatment" },
-      { id: "s15", name: "Facials Only", price: "$25", image: null, desc: "Deep cleanse and rejuvenation" },
-      { id: "s16", name: "Haircut & Eyebrows", price: "$30", image: null, desc: "Cut plus brow cleanup combo" },
+      { id: "s1", name: "Haircut", price: "$25", image: "/services/haircut.svg", desc: "Classic cut tailored to your style", category: "cuts" },
+      { id: "s2", name: "Haircut & Shave", price: "$35", image: "/services/shave.svg", desc: "Full cut with a clean hot towel shave", category: "combo" },
+      { id: "s3", name: "Children", price: "$25", image: "/services/children.svg", desc: "Ages 12 and under", category: "kids" },
+      { id: "s4", name: "Children Skin Fade", price: "$25", image: "/services/fade.svg", desc: "Precision skin fade for the young ones", category: "kids" },
+      { id: "s5", name: "Shave & Line Up", price: "$15", image: "/services/lineup.svg", desc: "Clean shave with sharp line-up", category: "shave" },
+      { id: "s6", name: "Flat Top", price: "$25", image: "/services/haircut.svg", desc: "Level precision flat top cut", category: "cuts" },
+      { id: "s7", name: "Line Up", price: "$12", image: "/services/lineup.svg", desc: "Crisp edges and hairline shaping", category: "cuts" },
+      { id: "s8", name: "Taper", price: "$25", image: "/services/fade.svg", desc: "Gradual fade from short to long", category: "cuts" },
+      { id: "s9", name: "Haircut, Shave & Color", price: "$65", image: "/services/premium.svg", desc: "Full service with color treatment", category: "premium" },
+      { id: "s10", name: "Beard Shave", price: "$12", image: "/services/shave.svg", desc: "Full beard removal with hot towel", category: "shave" },
+      { id: "s11", name: "Beard Trim", price: "$7", image: "/services/beard.svg", desc: "Shape and maintain your beard", category: "beard" },
+      { id: "s12", name: "Designs", price: "$60", image: "/services/design.svg", desc: "Custom freehand hair art and patterns", category: "cuts" },
+      { id: "s13", name: "Eyebrows", price: "$7", image: "/services/eyebrows.svg", desc: "Clean shaping and grooming", category: "grooming" },
+      { id: "s14", name: "Haircut, Shave & Facial", price: "$65", image: "/services/premium.svg", desc: "Premium package with facial treatment", category: "premium" },
+      { id: "s15", name: "Facials Only", price: "$25", image: "/services/facial.svg", desc: "Deep cleanse and rejuvenation", category: "grooming" },
+      { id: "s16", name: "Haircut & Eyebrows", price: "$30", image: "/services/haircut.svg", desc: "Cut plus brow cleanup combo", category: "combo" },
     ],
   },
   nailsSalon: {
@@ -413,13 +413,30 @@ function HomePage({ data, admin, update, onNav }) {
   );
 }
 
+// ─── SERVICE CATEGORIES ───
+const SERVICE_CATEGORIES = [
+  { key: "all", label: "All" },
+  { key: "cuts", label: "Haircuts" },
+  { key: "kids", label: "Kids" },
+  { key: "shave", label: "Shave" },
+  { key: "beard", label: "Beard" },
+  { key: "combo", label: "Combos" },
+  { key: "premium", label: "Premium" },
+  { key: "grooming", label: "Grooming" },
+];
+
 // ─── SERVICES PAGE (Interactive Menu with Photo Slots) ───
 function ServicesPage({ data, admin, update, onNav }) {
   const [view, setView] = useState("list"); // list | grid
+  const [filter, setFilter] = useState("all");
   const services = data.services.barbershop;
-  const updateService = (i, field, val) => { const n = [...services]; n[i] = { ...n[i], [field]: val }; update("services", { ...data.services, barbershop: n }); };
-  const addService = () => update("services", { ...data.services, barbershop: [...services, { id: "s"+Date.now(), name: "New Service", price: "$0", image: null, desc: "" }] });
-  const removeService = (i) => update("services", { ...data.services, barbershop: services.filter((_,idx)=>idx!==i) });
+  const filtered = filter === "all" ? services : services.filter(s => s.category === filter);
+  const updateService = (i, field, val) => { const idx = services.findIndex(s => s.id === filtered[i].id); const n = [...services]; n[idx] = { ...n[idx], [field]: val }; update("services", { ...data.services, barbershop: n }); };
+  const addService = () => update("services", { ...data.services, barbershop: [...services, { id: "s"+Date.now(), name: "New Service", price: "$0", image: null, desc: "", category: "cuts" }] });
+  const removeService = (i) => { const id = filtered[i].id; update("services", { ...data.services, barbershop: services.filter(s=>s.id!==id) }); };
+
+  // Only show categories that have services
+  const activeCategories = SERVICE_CATEGORIES.filter(c => c.key === "all" || services.some(s => s.category === c.key));
 
   return (
     <div className="page-enter">
@@ -431,11 +448,18 @@ function ServicesPage({ data, admin, update, onNav }) {
             <button onClick={()=>setView("grid")} style={{ background:view==="grid"?"var(--accent)":"transparent", color:view==="grid"?"#000":"var(--dim)", border:"none", borderRadius:6, padding:"6px 10px", cursor:"pointer", fontSize:12, fontWeight:600 }}>{Icons.grid} Grid</button>
           </div>
         </div>
-        <p style={{ color:"var(--dim)", fontSize:14, marginBottom:28 }}>{services.length} services · Prices straight from the board</p>
+        <p style={{ color:"var(--dim)", fontSize:14, marginBottom:16 }}>{services.length} services · Prices straight from the board</p>
+
+        {/* Category filter pills */}
+        <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:24, paddingBottom:4 }}>
+          {activeCategories.map(c=>(
+            <button key={c.key} onClick={()=>setFilter(c.key)} style={{ background:filter===c.key?"var(--accent)":"rgba(255,255,255,.04)", color:filter===c.key?"#000":"var(--dim)", border:filter===c.key?"none":"1px solid rgba(255,255,255,.08)", borderRadius:20, padding:"6px 16px", fontSize:12, fontWeight:600, cursor:"pointer", transition:"all .2s", fontFamily:"'Outfit',sans-serif" }}>{c.label}{filter===c.key && filter!=="all" ? ` (${filtered.length})` : ""}</button>
+          ))}
+        </div>
 
         {view === "list" ? (
           <div>
-            {services.map((s,i)=>(
+            {filtered.map((s,i)=>(
               <div key={s.id} style={{ display:"flex", gap:16, padding:"20px 0", borderBottom:"1px solid var(--border)", alignItems:"flex-start" }}>
                 <ImgUpload src={s.image} onSet={v=>updateService(i,"image",v)} admin={admin} style={{ width:110, height:110, borderRadius:12, flexShrink:0 }} placeholder="">
                   {Icons.scissors}
@@ -455,7 +479,7 @@ function ServicesPage({ data, admin, update, onNav }) {
           </div>
         ) : (
           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))", gap:16 }}>
-            {services.map((s,i)=>(
+            {filtered.map((s,i)=>(
               <div key={s.id} style={{ background:"var(--card)", borderRadius:"var(--radius)", overflow:"hidden", border:"1px solid var(--border)", position:"relative" }}>
                 <ImgUpload src={s.image} onSet={v=>updateService(i,"image",v)} admin={admin} style={{ width:"100%", height:260 }} placeholder={s.name}>
                   <div style={{ color:"var(--accent)", opacity:.3 }}>{Icons.scissors}</div>
